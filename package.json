@@ -1,0 +1,32 @@
+{
+  "name": "projetodeextensao",
+  "version": "1.0.0",
+  "description": "A ideia do nosso projeto é criar uma aplicação que seja simples, ágil e eficiente. Nela, qualquer pessoa poderá registrar a localização e a situação de um animal de rua, criando um alerta em tempo real. Além do sistema de alertas, o aplicativo contará com um mural de adoção, informações sobre castração, posse responsável e contatos de emergência.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charlesalbuquerque/projetodeextensao.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/charlesalbuquerque/projetodeextensao/issues"
+  },
+  "homepage": "https://github.com/charlesalbuquerque/projetodeextensao#readme",
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.1",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prisma": "^6.19.3"
+  }
+}
