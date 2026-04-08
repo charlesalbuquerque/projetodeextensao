@@ -7,30 +7,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// O "Estoque" principal da ONG
 model Animal {
   id           Int      @id @default(autoincrement())
   nome         String
   especie      String
-  situacao     String
+  status       String   @default("RESGATADO") // RESGATADO, TRATAMENTO, ADOCAO, ADOTADO
   localizacao  String
   descricao    String?
-  dataResgate  DateTime @default(now())
+  dataEntrada  DateTime @default(now())
+  adotanteId   Int?     // Relaciona com User (Cliente)
+  adotante     User?    @relation("Adocoes", fields: [adotanteId], references: [id])
   donations    Donation[]
 }
 
+// "Fornecedores" (Clínicas, PetShops ou doadores de ração)
+model Supplier {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  contato   String
+  tipo      String   // Ex: Veterinária, Loja de Ração
+  servico   String?
+}
+
+// "Fluxo de Caixa" (Entradas de doações)
 model Donation {
   id        Int      @id @default(autoincrement())
   valor     Float
   doador    String
-  animal    Animal?  @relation(fields: [animalId], references: [id])
   animalId  Int?
+  animal    Animal?  @relation(fields: [animalId], references: [id])
   data      DateTime @default(now())
 }
 
+// Usuários (Clientes/Adotantes e Gestores)
 model User {
-  id    Int    @id @default(autoincrement())
-  nome  String
-  email String @unique
-  senha String
-  role  String @default("USER")
+  id       Int      @id @default(autoincrement())
+  nome     String
+  email    String   @unique
+  senha    String
+  role     String   @default("USER") // USER ou ADMIN
+  animais  Animal[] @relation("Adocoes")
+}
+
+// Tabela de Gastos/Despesas (Para o lucro/prejuízo)
+model Expense {
+  id          Int      @id @default(autoincrement())
+  descricao   String
+  valor       Float
+  categoria   String   // Ex: Veterinário, Ração, Limpeza
+  data        DateTime @default(now())
 }
