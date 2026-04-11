@@ -231,4 +231,41 @@ app.patch('/animais/:id/status', verificarToken, async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: "Não foi possível atualizar. Verifique se o ID do animal está correto." });
   }
+
+// CRUD DE FORNECEDORES
+
+// POST (PROTEGIDO POR TOKEN)
+app.post('/fornecedores', verificarToken, async (req, res) => {
+  try {
+    const { nome, cnpj, telefone } = req.body;
+
+    const fornecedor = await prisma.supplier.create({
+      data: {
+        nome,
+        cnpj,
+        telefone
+      }
+    });
+
+    res.status(201).json(fornecedor);
+
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao cadastrar fornecedor." });
+  }
+});
+
+// GET para Listar todos os Fornecedores
+app.get('/fornecedores', async (req, res) => {
+  try {
+    const fornecedores = await prisma.supplier.findMany({
+      orderBy: { id: 'desc' }
+    });
+
+    res.json(fornecedores);
+
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar fornecedores." });
+  }
+});
+
 });
