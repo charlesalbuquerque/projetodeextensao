@@ -266,8 +266,3 @@ app.get('/financeiro/despesas', verificarToken, verificarAdmin, async (req, res)
     res.status(500).json({ error: "Erro ao buscar despesas." });
   }
 });
-
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em: http://localhost:${PORT}`);
-});
