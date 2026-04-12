@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-
+import 'home_screen.dart';
+import 'register_screen.dart'; 
+import 'admin_panel_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -15,26 +18,36 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
   bool _carregando = false;
 
-  void _tentarLogin() async {
+void _tentarLogin() async {
     setState(() => _carregando = true);
 
-    // Chama o serviço que criamos antes
     bool sucesso = await _authService.login(
       _emailController.text,
       _senhaController.text,
     );
 
+    if (!mounted) return;
     setState(() => _carregando = false);
 
     if (sucesso) {
-      // Por enquanto, apenas mostra um aviso de sucesso
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Login realizado! 🐾"), backgroundColor: Colors.green),
-      );
-      // TODO: Navegar para a Home
+      final prefs = await SharedPreferences.getInstance();
+      final String role = prefs.getString('role') ?? 'USER';
+
+      if (role == 'ADMIN') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AdminPanelScreen()),
+        );
+      } else {
+        // Se for Usuário comum, vai direto para o Mural de Animais
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Falha no login. Verifique seus dados."), backgroundColor: Colors.red),
+        const SnackBar(content: Text("E-mail ou senha incorretos."), backgroundColor: Colors.red),
       );
     }
   }
@@ -42,49 +55,68 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.pets, size: 80, color: Colors.orange),
-            const SizedBox(height: 16),
-            const Text("Pet Rescue", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 32),
-            
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: "E-mail",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email),
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.pets, size: 80, color: Colors.orange),
+              const SizedBox(height: 16),
+              const Text("Pet Rescue", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 32),
+              
+              TextField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: "E-mail",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            
-            TextField(
-              controller: _senhaController,
-              obscureText: true, // Esconde a senha
-              decoration: const InputDecoration(
-                labelText: "Senha",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
+              const SizedBox(height: 16),
+              
+              TextField(
+                controller: _senhaController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: "Senha",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _carregando ? null : _tentarLogin,
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                child: _carregando 
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text("Entrar", style: TextStyle(color: Colors.white, fontSize: 18)),
+              const SizedBox(height: 24),
+              
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _carregando ? null : _tentarLogin,
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                  child: _carregando 
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text("Entrar", style: TextStyle(color: Colors.white, fontSize: 18)),
+                ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 16),
+
+              // 2. BOTÃO DE CADASTRO: Adicionado aqui embaixo
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                  );
+                },
+                child: const Text(
+                  "Não tem uma conta? Cadastre-se aqui!",
+                  style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
