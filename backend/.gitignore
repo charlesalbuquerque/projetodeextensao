@@ -1,13 +1,13 @@
-# Dependências
-node_modules/
-
-# Configurações locais e senhas
+# Backend
+**/node_modules/
+**/dist/
 .env
 
-# Arquivos do Sistema
+# Frontend / Flutter
+**/.dart_tool/
+**/build/
+**/.packages
+**/pubspec.lock
+**/*.log
+**/*.pyc
 .DS_Store
-Thumbs.db
-
-# Pastas de build 
-dist/
-build/
